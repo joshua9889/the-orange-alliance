@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 @Injectable()
 export class FTCDatabase {
 
-  year = 1617;
+  year = 1718;
 
   constructor(private http: Http) {}
 
@@ -14,7 +14,8 @@ export class FTCDatabase {
     const auth_header = new Headers({
       'X-Application-Origin': 'TOA'
     });
-    return this.http.get('http://theorangealliance.org:8080/apiv2' + url, { headers: auth_header });
+    return this.http.get('https://theorangealliance.org/apiv2' + url, { headers: auth_header });
+    // return this.http.get('http://localhost:8009/apiv2' + url, { headers: auth_header });
   }
 
   public getAnnouncements() {
@@ -55,6 +56,10 @@ export class FTCDatabase {
 
   public getAllMatches(year?: number) {
     return this.request('/matches/' + (year == null ? this.year : year) + '/count').map(res => res.json());
+  }
+
+  public getInsights(year?: number) {
+    return this.request('/matches/' + (year == null ? this.year : year) + '/insights').map(res => res.json());
   }
 
   public getHighScoreQual(year?: number) {
@@ -120,6 +125,14 @@ export class FTCDatabase {
       this.request('/match/' + match_key + '/details').map(res => res.json()),
       this.request('/match/' + match_key + '/stations').map(res => res.json())
     );
+  }
+
+  public getAllStreams() {
+    return this.request('/events/streams').map(res => res.json());
+  }
+
+  public getEventStream(event_key: string) {
+    return this.request('/event/' + event_key + "/stream").map(res => res.json());
   }
 
 }
