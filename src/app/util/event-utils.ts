@@ -85,6 +85,9 @@ export class EventFilter {
     } else {
       this.events_filtered = this.events;
     }
+    this.events_filtered.sort(function(a,b){
+      return (new Date(b.start_date).getTime() - new Date(a.start_date).getTime());
+    });
   }
 
   public getOriginalArray() {
@@ -92,6 +95,7 @@ export class EventFilter {
   }
 
   public getFilteredArray() {
+    console.log(this.events_filtered);
     return this.events_filtered;
   }
 
@@ -134,6 +138,17 @@ export class EventSorter {
     const temp = items[index1];
     items[index1] = items[index2];
     items[index2] = temp;
+  }
+
+  public sortRev(items, left, right) {
+
+	this.sort(items, left, right);
+	// reverse order
+    for (let i=0; i<(right+1-left)/2; i++) {
+		this.swap(items, left+i, right-i);
+	}
+
+    return items;
   }
 
 }

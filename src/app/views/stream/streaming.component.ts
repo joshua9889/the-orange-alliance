@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FTCDatabase } from '../../providers/ftc-database';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { TheOrangeAllianceGlobals } from '../../app.globals';
 
 export class StreamType {
   static YOUTUBE = 0;
@@ -11,16 +12,18 @@ export class StreamType {
 @Component({
   selector: 'toa-streaming',
   templateUrl: './streaming.component.html',
-  providers: [FTCDatabase]
+  providers: [FTCDatabase,TheOrangeAllianceGlobals]
 })
 export class StreamingComponent implements OnInit {
 
   streams: any[];
 
-  constructor(private ftc: FTCDatabase, private sanitizer:DomSanitizer) {}
+  constructor(private ftc: FTCDatabase, private sanitizer:DomSanitizer, private globaltoa:TheOrangeAllianceGlobals) {
+    this.globaltoa.setTitle("Streaming");
+  }
 
   ngOnInit() {
-    this.ftc.getAllStreams().subscribe((data) => {
+    this.ftc.getAllStreams().subscribe((data: any[]) => {
       this.streams = data;
 
       for (let stream of this.streams) {

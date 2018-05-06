@@ -4,9 +4,10 @@ import { Router } from '@angular/router';
 import { FTCDatabase } from '../../providers/ftc-database';
 import { SeasonParser } from '../../util/season-utils';
 import { EventFilter } from '../../util/event-utils';
+import { TheOrangeAllianceGlobals } from '../../app.globals';
 
 @Component({
-  providers: [FTCDatabase],
+  providers: [FTCDatabase,TheOrangeAllianceGlobals],
   selector: 'toa-events',
   templateUrl: './events.component.html'
 })
@@ -23,7 +24,9 @@ export class EventsComponent implements OnInit {
 
   event_filter: EventFilter;
 
-  constructor(private ftc: FTCDatabase, private router: Router) {}
+  constructor(private ftc: FTCDatabase, private router: Router, private globaltoa:TheOrangeAllianceGlobals) {
+    this.globaltoa.setTitle("Events");
+  }
 
   ngOnInit(): void {
     this.ftc.getSeasonEvents('1718').subscribe( (data) => {
@@ -33,6 +36,7 @@ export class EventsComponent implements OnInit {
       if (this.events.length > 0) {
         this.organizeEventsByWeek();
       }
+
     }, (err) => {
       console.log(err);
     });
@@ -61,12 +65,26 @@ export class EventsComponent implements OnInit {
       if (event.week_key !== cur_week) {
         this.weeks.push({
           'week': event.week_key,
-          'start_date': event.start_date,
-          'end_date': event.end_date
+          'start_date': this.getMonday(event.start_date),
+          'end_date': this.getSunday(event.start_date)
         });
         cur_week = event.week_key;
       }
     }
+  }
+
+  getMonday(d) {
+    d = new Date(d);
+    var day = d.getDay(),
+      diff = d.getDate() - day + (day == 0 ? -6:1); // adjust when day is sunday
+    return new Date(d.setDate(diff));
+  }
+
+  getSunday(d) {
+    d = new Date(d);
+    var day = d.getDay(),
+      diff = d.getDate() +6 - day + (day == 0 ? -6:1); // adjust when day is sunday
+    return new Date(d.setDate(diff));
   }
 
   getEventsByWeek(week: any): any {

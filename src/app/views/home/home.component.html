@@ -14,15 +14,20 @@
   <div id="side-bar">
     <h2></h2>
     <p>
-      The Orange Alliance is a project to help make FTC match, event and team information more accessible. The project is in its early stages. You're more than welcome to contribute code.</p>
-      <button onclick="window.location.href='https://discord.gg/5fH66UV'" class="sidebar-button">Chat with us on Discord!</button>
+      The Orange Alliance is a project to help make FTC match, event, and team information more accessible.</p>
+      <button onclick="window.location.href='livedocs'" class="sidebar-button">Report live FTC event results!</button>
       <br>
-      <button onclick="window.location.href='https://goo.gl/forms/kgMtJgXq6QCny4vm1'" class="sidebar-button">Contact us Here!</button>
+      <button onclick="window.location.href='mailto:contact@theorangealliance.org'" class="sidebar-button">Contact us!</button>
       <br>
-      <button onclick="window.location.href='https://github.com/orange-alliance'" class="sidebar-button">Contribute on Github!</button>
+      <button onclick="window.location.href='https://github.com/orange-alliance'" class="sidebar-button">Contribute code on Github!</button>
+	  <br>
+	  <button onclick="window.location.href='https://discord.gg/5fH66UV'" class="sidebar-button">Chat with us on Discord!</button>
     <br>
     <p align="center"><strong>Powered By:</strong></p>
     <p align="center"><a href="http://www.revrobotics.com/" target="_blank"><img src="../../../assets/imgs/media_icons/REV_LOGO_LIGHT.png"></a></p>
+    <!--<p align="center"><strong>Data Provided By:</strong></p>
+    <p align="center"><a href="https://www.firstinspires.org/robotics/ftc" target="_blank"><img src="../../../assets/imgs/media_icons/FIRST_Vertical_RGB.png"></a></p>-->
+
   </div>
 
   <br/>
@@ -51,7 +56,10 @@
         <tbody *ngIf="current_events.length > 0">
         <tr *ngFor="let event of current_events">
           <td>{{ event.region_key }}</td>
-          <td><a href="/events/{{ event.event_key }}">{{ event.event_name }}</a></td>
+          <td>
+            <a *ngIf="event.division_name == null" href="/events/{{ event.event_key }}" data-toggle="tooltip" title='In {{ event.city }}, {{ event.state_prov }}'>{{ event.event_name }}</a>
+            <a *ngIf="event.division_name" href="/events/{{ event.event_key }}" data-toggle="tooltip" title='In {{ event.city }}, {{ event.state_prov }}'>{{ event.event_name }} - {{ event.division_name }} Division</a>
+          </td>
           <td *ngIf="event.start_date != event.end_date">{{ event.start_date | date :  "mediumDate"}} - {{ event.end_date | date :  "mediumDate" }}</td>
           <td *ngIf="event.start_date == event.end_date">{{ event.start_date | date :  "mediumDate"}}</td>
         </tr>
@@ -64,7 +72,7 @@
 
   <div class="row">
     <div class="col-xs-12 col-md-8 col-md-offset-2">
-      <h3 class="mar-0">2017-2018 FTC Statistics</h3>
+      <h3 class="mar-0">2017-2018 FTC Leaderboard</h3>
       <h3 class="mar-0"><small *ngIf="match_count"> {{ match_count }} Matches</small></h3>
     </div>
   </div>

@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FTCDatabase } from '../../providers/ftc-database';
 import { MatchParser } from '../../util/match-utils';
+import { TheOrangeAllianceGlobals } from '../../app.globals';
 
 @Component({
   selector: 'toa-home',
   templateUrl: './home.component.html',
-  providers: [FTCDatabase]
+  providers: [FTCDatabase,TheOrangeAllianceGlobals]
 })
 export class HomeComponent {
 
@@ -21,7 +22,8 @@ export class HomeComponent {
   match_insights: any;
   insights: any;
 
-  constructor(private router: Router, private ftc: FTCDatabase) {
+  constructor(private router: Router, private ftc: FTCDatabase, private globaltoa:TheOrangeAllianceGlobals) {
+    this.globaltoa.setTitle("Home")
     this.ftc.getAllMatches().subscribe((match_data) => {
       this.match_count = match_data[0].match_count;
     }, (err) => {
@@ -29,7 +31,7 @@ export class HomeComponent {
     });
     this.ftc.getHighScoreQual().subscribe((data) => {
       this.qual_match = this.getBestMatch(data);
-      this.ftc.getStations(this.qual_match.match_key).subscribe((qual_data) => {
+      this.ftc.getStations(this.qual_match.match_key).subscribe((qual_data: any) => {
         let teams = '';
         for (const station of qual_data) {
           teams += station.team_key + ',';
@@ -48,7 +50,7 @@ export class HomeComponent {
     });
     this.ftc.getHighScoreElim().subscribe((elim_data) => {
       this.elim_match = this.getBestMatch(elim_data);
-      this.ftc.getStations(this.elim_match.match_key).subscribe((data) => {
+      this.ftc.getStations(this.elim_match.match_key).subscribe((data: any) => {
         let teams = '';
         for (const station of data) {
           teams += station.team_key + ',';
@@ -67,7 +69,7 @@ export class HomeComponent {
     });
     this.ftc.getHighScoreWithPenalty().subscribe((match_data) => {
       this.normal_match = this.getBestMatch(match_data);
-      this.ftc.getStations(this.normal_match.match_key).subscribe((data) => {
+      this.ftc.getStations(this.normal_match.match_key).subscribe((data: any) => {
         let teams = '';
         for (const station of data) {
           teams += station.team_key + ',';
@@ -84,8 +86,9 @@ export class HomeComponent {
     }, (err) => {
       console.log(err);
     });
-    this.ftc.getSeasonEvents('1718').subscribe((data) => {
-      const today = new Date();
+    this.ftc.getSeasonEvents('1718').subscribe((data: any) => {
+      var today = new Date();
+	  today = new Date(today.getFullYear(), today.getMonth(), today.getDate() ); /** remove fractional day */
       this.current_events = [];
       for (const event of data) {
         let week_start = this.getStartOfWeek(new Date(event.start_date));
@@ -97,7 +100,7 @@ export class HomeComponent {
     }, (err) => {
       console.log(err);
     });
-    this.ftc.getAnnouncements().subscribe((data) => {
+    this.ftc.getAnnouncements().subscribe((data: any) => {
       const today = new Date();
       for (let announcement of data) {
         if (this.isBetweenDates(new Date(announcement.publish_date), new Date(announcement.end_date), today)) {
